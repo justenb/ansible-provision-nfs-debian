@@ -1,0 +1,6 @@
+[nfs-server]
+server1 ansible_ssh_host=
+
+[nfs-clients]
+client1 ansible_ssh_host=
+client2 ansible_ssh_host=

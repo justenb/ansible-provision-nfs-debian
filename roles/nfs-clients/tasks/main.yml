@@ -1,0 +1,26 @@
+---
+- name: install nfs client
+  apt:
+    pkg: nfs-common
+    state: present
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    -nfs
+
+- name: create nfs path on nfs client if not exists
+  file:
+    path: "{{ item.local }}"
+    state: directory
+  with_items: "{{ nfs_client_imports }}"
+
+
+- name: mount the shared directories
+  mount:
+    name: "{{ item.0.local }}"
+    src: "{{ hostvars[item.1].ansible_default_ipv4.address}}:{{ item.0.remote }}"
+    opts: "{{ item.0.nfsopts }}"
+    fstype: "{{ item.0.fstype }}"
+    state: mounted
+  with_nested:
+    - "{{ nfs_client_imports }}"
+    - "{{ groups['nfs-server'] }}"

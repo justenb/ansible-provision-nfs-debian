@@ -1,0 +1,41 @@
+---
+- name: gather facts from nfs clients
+  setup:
+  delegate_to: "{{item}}"
+  delegate_facts: True
+  loop: "{{groups['nfs-clients']}}"
+
+- name: install nfs server
+  apt:
+    pkg: nfs-kernel-server
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    -nfs
+
+- name: create nfs path on nfs server if not exists
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  with_items: "{{ nfs_exports }}"
+
+- name: export the directory editing the file /etc/exports
+  lineinfile:
+    dest: /etc/exports
+    regexp: "^{{ item[0].path }} "
+    line: "{{ item[0].path }} {{ hostvars[item[1]].ansible_default_ipv4.address }}({{ item[0].export }})"
+    create: yes
+  with_nested:
+    - "{{ nfs_exports }}"
+    - "{{ groups['nfs-clients'] }}"
+
+- name: ensure nfs service is running
+  service:
+    name: "{{ item }}"
+    state: started
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - nfs
+  with_items:
+    - nfs-kernel-server

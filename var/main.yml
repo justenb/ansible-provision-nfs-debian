@@ -1,0 +1,10 @@
+---
+nfs_exports:
+  - path: ""
+    export: ""
+
+nfs_client_imports:
+  - local: ""
+    remote: ""
+    server_host: ""
+    nfsopts: ""

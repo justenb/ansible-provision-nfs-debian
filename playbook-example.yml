@@ -1,0 +1,20 @@
+---
+- hosts: nfs-server
+  tasks:
+  - include_role:
+      name: nfs-server
+    vars:
+      nfs_exports:
+        - path: /var/nfs
+          export: "(rw,sync,no_root_squash,no_subtree_check)"
+
+- hosts: nfs-clients
+  tasks:
+  - include_role:
+      name: nfs-clients
+    vars:
+      nfs_client_imports:
+        - local: /nfs
+          remote: /var/nfs
+          fstype: nfs
+          nfsopts: "rw,sync,nfsvers=3"
