@@ -10,7 +10,7 @@
 ## Usage    
 clone the repository, eg.                                                                                                                                                               
 ```
-git clone https://github.com/jschulthess/ansible-provision-nfs-debian
+git clone https://github.com/justenb/ansible-provision-nfs-debian
 ```
 playbook example
 ```
